@@ -9,9 +9,11 @@ In addition to Cisco's marking process, the PKA Marker addreses maintaining acad
 
 The PKA Marker offers an alternative for marking Cisco NetAcad PKA files as well as custom created PKA files. 
 
-![Running pka_marker ](https://github.com/user-attachments/assets/2c6d666e-2c72-40f8-ab54-c6eedc49c3c2)
+![Running pka_marker ](https://github.com/user-attachments/assets/2c6d666e-2c72-40f8-ab54-c6eedc49c3c2)  
 
 The PKA Marker is a command line application which obtains the student information and marks using an instance of Packet Tracer.  PKA Marker is configured via configuration files and supports command line options.  Running PKA Marker without any command line options generates the results seen below where the configuration file refers to the directory that the example PKA files are stored in.
+
+The underscores in the email addresses above are present to emphasise that this is a fictitious domain.  
 
 # Installation and use.
 
@@ -30,6 +32,7 @@ First5 Last5,First5.Last5@students.mega_poly_one.ac.nz,66.6667,66.7
 First6 Last6,First6.Last6@students.mega_poly_one.ac.nz,83.3333,83.3
 First7 Last7,First7.Last7@students.mega_poly_one.ac.nz,100.0,100.0
 </pre>
+
 The above output shows the full name (Firstx Lastx) of each student, their email address (if entered in the profile), raw score and the score rounded to 1 D.P (specified in a configuration file).  The Lab ID option is not displayed above as it was disabled in the *.env.shared* configuration file at the time.  See [Lab-ID feature](#lab_id-feature) for details.
 
 
