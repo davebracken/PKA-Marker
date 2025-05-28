@@ -1,3 +1,6 @@
+# py_ptmp.py
+# Author: Dave Bracken
+
 import socket
 import logging
 
