@@ -1,5 +1,5 @@
 # The command line help can be invoked using --help or -h
-
+<pre>
 PS C:\Users\Dave\Downloads\pka_marker> .\pka_marker.py --help
 usage: pka_marker.py [-h] [--data-store-id DATA_STORE_ID] [--log-file LOG_FILE] [--no-console] [--no-csv] [--no-lab-id]
                      [--output-file OUTPUT_FILE] [--pka-dir PKA_DIR] [--pka-file PKA_FILE]
@@ -23,8 +23,8 @@ options:
   --test-connection                      Test connection to Packet Tracer without marking PKAs. (default: False)
   --verbose, -v                          Enable verbose logging. (default: False)
   --version, -V                          Show program version.
-
-
+</pre>
+<pre>
 PS C:\Users\Dave\Downloads\pka_marker> .\pka_marker.py -h
 usage: pka_marker.py [-h] [--data-store-id DATA_STORE_ID] [--log-file LOG_FILE] [--no-console] [--no-csv] [--no-lab-id]
                      [--output-file OUTPUT_FILE] [--pka-dir PKA_DIR] [--pka-file PKA_FILE]
@@ -47,4 +47,5 @@ options:
   --score-rounding-dp SCORE_ROUNDING_DP  Number of decimal places to round the lab score. (default: 1)
   --test-connection                      Test connection to Packet Tracer without marking PKAs. (default: False)
   --verbose, -v                          Enable verbose logging. (default: False)
+</pre>  
   --version, -V                          Show program version.
