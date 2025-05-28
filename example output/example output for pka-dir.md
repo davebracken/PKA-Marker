@@ -1,6 +1,6 @@
 
 # Using PKA_BASE_DIR = 'C:\Users\Dave\Downloads\pka_marker\sample_pka_files' from .env.shared
-
+<pre>
 PS C:\Users\Dave\downloads\pka_marker> .\pka_marker.py
 student_full_name,student_email_addr,lab_score,rounded_lab_score,lab_id
 First1 Last1,,0.0,0.0,DB_IntroLab1
@@ -12,8 +12,10 @@ First6 Last6,First6.Last6@students.mega_poly_one.ac.nz,83.3333,83.3,DB_IntroLab1
 First7 Last7,First7.Last7@students.mega_poly_one.ac.nz,100.0,100.0,DB_IntroLab1
 First8 Last8,First8.Last8@students.mega_poly_one.ac.nz,100.0,100.0,DB_IntroLab1-2024
 Guest,,0.0,0.0,DB_IntroLab1
+</pre>
 
 # Using PKA_BASE_DIR = './sample_pka_files' from .env.shared
+<pre>
 PS C:\Users\Dave\downloads\pka_marker> .\pka_marker.py
 student_full_name,student_email_addr,lab_score,rounded_lab_score,lab_id
 First1 Last1,,0.0,0.0,DB_IntroLab1
@@ -25,9 +27,10 @@ First6 Last6,First6.Last6@students.mega_poly_one.ac.nz,83.3333,83.3,DB_IntroLab1
 First7 Last7,First7.Last7@students.mega_poly_one.ac.nz,100.0,100.0,DB_IntroLab1
 First8 Last8,First8.Last8@students.mega_poly_one.ac.nz,100.0,100.0,DB_IntroLab1-2024
 Guest,,0.0,0.0,DB_IntroLab1
-
+</pre>
 
 # Overriding PKA_BASE_DIR in .env.shared by specifying --pka-dir with a relative path
+<pre>
 PS C:\Users\Dave\downloads\pka_marker> .\pka_marker.py  --pka-dir .\sample_pka_files
 student_full_name,student_email_addr,lab_score,rounded_lab_score,lab_id
 First1 Last1,,0.0,0.0,DB_IntroLab1
@@ -39,9 +42,10 @@ First6 Last6,First6.Last6@students.mega_poly_one.ac.nz,83.3333,83.3,DB_IntroLab1
 First7 Last7,First7.Last7@students.mega_poly_one.ac.nz,100.0,100.0,DB_IntroLab1
 First8 Last8,First8.Last8@students.mega_poly_one.ac.nz,100.0,100.0,DB_IntroLab1-2024
 Guest,,0.0,0.0,DB_IntroLab1
-
+</pre> 
 
 # Overriding PKA_BASE_DIR in .env.shared by specifying --pka-dir with an absolute path
+<pre>
 PS C:\Users\Dave\downloads\pka_marker> .\pka_marker.py  --pka-dir c:\users\dave\downloads\pka_marker\sample_pka_files
 student_full_name,student_email_addr,lab_score,rounded_lab_score,lab_id
 First1 Last1,,0.0,0.0,DB_IntroLab1
@@ -53,4 +57,5 @@ First6 Last6,First6.Last6@students.mega_poly_one.ac.nz,83.3333,83.3,DB_IntroLab1
 First7 Last7,First7.Last7@students.mega_poly_one.ac.nz,100.0,100.0,DB_IntroLab1
 First8 Last8,First8.Last8@students.mega_poly_one.ac.nz,100.0,100.0,DB_IntroLab1-2024
 Guest,,0.0,0.0,DB_IntroLab1
+</pre>
 
