@@ -292,21 +292,21 @@ The PKA Marker is known to Packet Tracer as an external application and as such,
 
 If the ExApp authentication process is successful, then Packet Tracer can begin processing the PKA file.
 
-PKA Marker, now authenticated as an ExApp, asks Packet Tracer to load the PKA file to be marked by calling `appWindow.fileOpen`.  PKA Marker then authenticates to the PKA by requesting a challenge key by calling `appWindow.getActiveFile.getChallengeKeyAsBase64`.  The challenge key that is received is base 64 encoded. The PKA password is added to the challenge key and hashed using MD5 and converted to upper case and sent to Packet Tracer by calling `appWindow.getActiveFile.confirmPassword`.
+PKA Marker, now authenticated as an ExApp, asks Packet Tracer to load the PKA file to be marked by calling *appWindow.fileOpen*.  PKA Marker then authenticates to the PKA by requesting a challenge key by calling *appWindow.getActiveFile.getChallengeKeyAsBase64*.  The challenge key that is received is base 64 encoded. The PKA password is added to the challenge key and hashed using MD5 and converted to upper case and sent to Packet Tracer by calling *appWindow.getActiveFile.confirmPassword*.
 
 If the PKA password is confirmed then PKA Marker can ask for details from the PKA file.
 
-If the LabID is to be retrieved from the script data store (DATA_STORE_OBJECT_LAB_ID refers to a non empty string and the command line option --no-lab-id has not been used) then `appWindow.getActiveFile.getScriptDataStore` is called passing it the name of the ID which in the *.env.shared* file provided is LabID.
+If the LabID is to be retrieved from the script data store (DATA_STORE_OBJECT_LAB_ID refers to a non empty string and the command line option --no-lab-id has not been used) then *appWindow.getActiveFile.getScriptDataStore* is called passing it the name of the ID which in the *.env.shared* file provided is LabID.
 
-The lab score is obtained by calling `appWindow.getActiveFile.getPercentageCompleteScore`.
+The lab score is obtained by calling *appWindow.getActiveFile.getPercentageCompleteScore*.
 
-The simulation time is advanced up to 6 times by calling `appWindow.getRealtimeToolbar.fastForwardTime` unless a score of 100% is received during one of the iterations.
+The simulation time is advanced up to 6 times by calling *appWindow.getRealtimeToolbar.fastForwardTime* unless a score of 100% is received during one of the iterations.
 
 In more complex PKA scenarios, Packet Tracer needs time to run connectivity tests and advancing the simulation time addresses this.  This behavior that can be seen in the Packet Tracer's PT Activity window when pressing Check Results results in updating the completion score and eventually seeing the final score.
 
-The name the student entered in their profile is obtained by calling `appWindow.getActiveFile.getUserProfile.getName` and their email by calling `appWindow.getActiveFile.getUserProfile.getEmail`.
+The name the student entered in their profile is obtained by calling *appWindow.getActiveFile.getUserProfile.getName* and their email by calling *appWindow.getActiveFile.getUserProfile.getEmail*.
 
-The PKA file is closed by calling `appWindow.fileNew` with the value `false` to not ask for confirmation.
+The PKA file is closed by calling *appWindow.fileNew* with the value *false* to not ask for confirmation.
 
 The next PKA file is then processed.
 
