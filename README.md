@@ -324,11 +324,12 @@ If Packet Tracer is run using the --no-gui option, the GUI windows 'Please wait.
 Very occasonally during development in the last few years, it was observed that PKA Marker could not connect to Packet Tracer on port 39000 locally.  In that intance, the GUI in Packet Tracer reported that it had incremented the currently used listening port by a few ports.  The author assumes the currently available port had been stored in one of the Packet Tracer (not PKA Marker) configuration files because after deleting those files and restarting Packet Tracer, it returned it to listening on the default port 39000.  In the last 3 years, this has only been observed twice (out of Packet Tracer being run thousands of times) and so is quite rare.
 
 ## Testing and development.
-All testing and development was done using Packet Tracer 8.2.2 and 9.0.0 Open Beta (Build 680) on Windows 10 with Python 3.12 and 3.13, Wireshark, VSCode and NotePad++.  Testing on Linux is underway.
+All testing and development was done using Packet Tracer 8.2.2 and 9.0.0 Open Beta (Build 680) on Windows 10 with Python 3.12 and 3.13, Wireshark, VSCode and NotePad++.  
+Testing on Linux is underway.
 
 ## Future development.
-Internationalisation using Python i18n is being considered.
-Work is underway to integrate PKA MArker within the VLE so the student will receive a mark for the lab withi a few seconds of submitting it.
+Internationalisation using Python i18n is being considered.  
+Work is underway to integrate PKA Marker within the VLE so the student will receive a mark for the lab within a few seconds of submitting it.
 
 ## Reporting Issues
 If you encounter any errors or have suggestions, please [open an issue](https://github.com/davebracken/PKA-Marker/issues) on GitHub.  
