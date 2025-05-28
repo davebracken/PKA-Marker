@@ -1,0 +1,56 @@
+
+# Using PKA_BASE_DIR = 'C:\Users\Dave\Downloads\pka_marker\sample_pka_files' from .env.shared
+
+PS C:\Users\Dave\downloads\pka_marker> .\pka_marker.py
+student_full_name,student_email_addr,lab_score,rounded_lab_score,lab_id
+First1 Last1,,0.0,0.0,DB_IntroLab1
+First2 Last2,First2.Last2@students.mega_poly_one.ac.nz,0.0,0.0,DB_IntroLab1
+First3 Last3,First3.Last3@students.mega_poly_one.ac.nz,16.6667,16.7,DB_IntroLab1
+First4 Last4,First4.Last4@students.mega_poly_one.ac.nz,33.3333,33.3,DB_IntroLab1
+First5 Last5,First5.Last5@students.mega_poly_one.ac.nz,66.6667,66.7,DB_IntroLab1
+First6 Last6,First6.Last6@students.mega_poly_one.ac.nz,83.3333,83.3,DB_IntroLab1
+First7 Last7,First7.Last7@students.mega_poly_one.ac.nz,100.0,100.0,DB_IntroLab1
+First8 Last8,First8.Last8@students.mega_poly_one.ac.nz,100.0,100.0,DB_IntroLab1-2024
+Guest,,0.0,0.0,DB_IntroLab1
+
+# Using PKA_BASE_DIR = './sample_pka_files' from .env.shared
+PS C:\Users\Dave\downloads\pka_marker> .\pka_marker.py
+student_full_name,student_email_addr,lab_score,rounded_lab_score,lab_id
+First1 Last1,,0.0,0.0,DB_IntroLab1
+First2 Last2,First2.Last2@students.mega_poly_one.ac.nz,0.0,0.0,DB_IntroLab1
+First3 Last3,First3.Last3@students.mega_poly_one.ac.nz,16.6667,16.7,DB_IntroLab1
+First4 Last4,First4.Last4@students.mega_poly_one.ac.nz,33.3333,33.3,DB_IntroLab1
+First5 Last5,First5.Last5@students.mega_poly_one.ac.nz,66.6667,66.7,DB_IntroLab1
+First6 Last6,First6.Last6@students.mega_poly_one.ac.nz,83.3333,83.3,DB_IntroLab1
+First7 Last7,First7.Last7@students.mega_poly_one.ac.nz,100.0,100.0,DB_IntroLab1
+First8 Last8,First8.Last8@students.mega_poly_one.ac.nz,100.0,100.0,DB_IntroLab1-2024
+Guest,,0.0,0.0,DB_IntroLab1
+
+
+# Overriding PKA_BASE_DIR in .env.shared by specifying --pka-dir with a relative path
+PS C:\Users\Dave\downloads\pka_marker> .\pka_marker.py  --pka-dir .\sample_pka_files
+student_full_name,student_email_addr,lab_score,rounded_lab_score,lab_id
+First1 Last1,,0.0,0.0,DB_IntroLab1
+First2 Last2,First2.Last2@students.mega_poly_one.ac.nz,0.0,0.0,DB_IntroLab1
+First3 Last3,First3.Last3@students.mega_poly_one.ac.nz,16.6667,16.7,DB_IntroLab1
+First4 Last4,First4.Last4@students.mega_poly_one.ac.nz,33.3333,33.3,DB_IntroLab1
+First5 Last5,First5.Last5@students.mega_poly_one.ac.nz,66.6667,66.7,DB_IntroLab1
+First6 Last6,First6.Last6@students.mega_poly_one.ac.nz,83.3333,83.3,DB_IntroLab1
+First7 Last7,First7.Last7@students.mega_poly_one.ac.nz,100.0,100.0,DB_IntroLab1
+First8 Last8,First8.Last8@students.mega_poly_one.ac.nz,100.0,100.0,DB_IntroLab1-2024
+Guest,,0.0,0.0,DB_IntroLab1
+
+
+# Overriding PKA_BASE_DIR in .env.shared by specifying --pka-dir with an absolute path
+PS C:\Users\Dave\downloads\pka_marker> .\pka_marker.py  --pka-dir c:\users\dave\downloads\pka_marker\sample_pka_files
+student_full_name,student_email_addr,lab_score,rounded_lab_score,lab_id
+First1 Last1,,0.0,0.0,DB_IntroLab1
+First2 Last2,First2.Last2@students.mega_poly_one.ac.nz,0.0,0.0,DB_IntroLab1
+First3 Last3,First3.Last3@students.mega_poly_one.ac.nz,16.6667,16.7,DB_IntroLab1
+First4 Last4,First4.Last4@students.mega_poly_one.ac.nz,33.3333,33.3,DB_IntroLab1
+First5 Last5,First5.Last5@students.mega_poly_one.ac.nz,66.6667,66.7,DB_IntroLab1
+First6 Last6,First6.Last6@students.mega_poly_one.ac.nz,83.3333,83.3,DB_IntroLab1
+First7 Last7,First7.Last7@students.mega_poly_one.ac.nz,100.0,100.0,DB_IntroLab1
+First8 Last8,First8.Last8@students.mega_poly_one.ac.nz,100.0,100.0,DB_IntroLab1-2024
+Guest,,0.0,0.0,DB_IntroLab1
+
