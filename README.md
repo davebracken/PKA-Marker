@@ -15,6 +15,8 @@ The PKA Marker is a command line application which obtains the student informati
 
 # Installation and use.
 
+The examples show PKA Marker being run on Windows 10.
+
 ## Running the PKA marker.
 In the example below, PKA Marker obtains the scores for the PKA files in the *sample_pka_files* directory (which is specified in the *.env.shared* configuration file). 
 <pre>
@@ -150,7 +152,8 @@ SIM_TIME_ADVANCEMENT = 6
 SCORE_DP = 1
 </pre>
 
-The ExApp and PKA passwords are stored in *.env.secret*.  For security reasons, credentials cannot be entered via the command line hence them not being available as command line options.
+The ExApp and PKA passwords are stored in *.env.secret*.  For security reasons, credentials cannot be entered via the command line hence them not being available as command line options.  
+
 *.env.secret*
 <pre>
 /# Packet Tracer External application (EXAPP) credentials
@@ -212,7 +215,7 @@ Click Yes in the Add New ExApp window as earlier.
 
 Update EXAPP_PASSWORD in *.env.secret* with the new key.  
 
-Run .\pka_marker.py and ensure it authenticates using the updated key.  You should see the marking output shown earlier.  
+Run `.\pka_marker.py` and ensure it authenticates using the updated key.  You should see the marking output shown earlier.  
 
 
 # Checking Packet Tracer settings.
