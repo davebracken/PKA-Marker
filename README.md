@@ -9,7 +9,7 @@ In addition to Cisco's marking process, the PKA Marker addreses maintaining acad
 
 The PKA Marker offers an alternative for marking Cisco NetAcad PKA files as well as custom created PKA files. 
 
-![Running pka_marker ](https://github.com/user-attachments/assets/2c6d666e-2c72-40f8-ab54-c6eedc49c3c2)  
+![Running pka_marker ](images/Running_PKA_Marker.gif)  
 
 The PKA Marker is a command line application which obtains the student information and marks using an instance of Packet Tracer.  PKA Marker is configured via configuration files and supports command line options.  Running PKA Marker without any command line options generates the results seen below where the configuration file refers to the directory that the example PKA files are stored in.
 
@@ -57,7 +57,8 @@ This assumes all the files from GitHub have been downloaded.
 
 3. Start Packet Tracer.  
    Click Yes in the Add New ExApp GUI to register the ExApp.  
-![Registering the ExApp](https://github.com/user-attachments/assets/a06c85e6-bdcd-4f9b-ad1e-0d2863f8b724)  
+![Registering the ExApp](images/Registering_the_ExApp.JPG)  
+
    There is nothing else to configure at this stage.
 
    For info.  The *.env.shared* file refers to the example PKA files in the *Sample PKA files* subdirectory and the ExApp credentials in *.env.secret* will authenticate to Packet Tracer using the settings in *pka_marker.pta*
@@ -225,9 +226,10 @@ Run `.\pka_marker.py` and ensure it authenticates using the updated key.  You sh
 
 ## Checking the port that Packet Tracer is listening on.
 In Packet Tracer, from the Extensions menu, click IPC then Options.  The shortcut is Ctrl Shift J.  
-![Check listening IPC port -1](https://github.com/user-attachments/assets/d61171e5-e9bc-40bb-9ce2-a4a5e328c203)
+![Check listening IPC port-1](images/Check_listening_IPC_port-1.JPG)
 The default port 39000 is reported below.  
-![Check listening IPC port -2](https://github.com/user-attachments/assets/9600ca7a-5355-4333-99ea-bf21f92c2383)
+![The listening port](images/Check_listening_IPC_port-2.JPG)
+
 
 A connectivity check can be run from PKA Marker.
 <pre>.\pka_marker.py --test-connection
@@ -237,9 +239,9 @@ Packet Tracer is available on localhost:39000.
 
 ## Checking the ExApp is registered.
 From the Extensions menu click IPC then Configured Apps.  The shortcut is Ctrl Shift C.
-![Checking the ExApp has been registered](https://github.com/user-attachments/assets/cb105ab7-4fee-45a6-8572-c3f687eea10f)
+![Checking the ExApp has been registered](images/Checking_the_ExApp_has_been_registered.JPG)
 Click PKA Marker  
-![Showing the registered ExApps](https://github.com/user-attachments/assets/f6b2f624-bfd1-4ef9-a1f2-716cb2797afd)
+![Showing the registered ExApps](images/Showing_the_registered_ExApps.JPG)
 
 
 # Modifying PKA's
@@ -255,7 +257,7 @@ From the outset, addressing academic integrity aspects was paramount.  In the Pa
 Typically the labs were due midnight Sunday and all the marks from the submitted PKA's were uploaded to the VLE by 10:00 on Monday or earlier.  With course sizes between 80 and 120, the manual effort here would have been significant without a degree of automation. This meant that the students knew exacly where they stood course mark wise week by week which they appreciated.
 
 To see this, select Activity Wizard from the Extensions menu in Packet Tracer. Click Answer Network on the left, then Settings on the right.
-![Locking user profile and no guest profile](https://github.com/user-attachments/assets/b404198e-1266-4d2c-b1e2-c50b9202e62e)
+![Locking user profile and no guest profile](images/Locking_user_profile_and_no_guest_profile.JPG)
 Click both and Save your PKA.  In the sample PKA's, both options are selected.
 
 ## Lab_ID feature
@@ -277,16 +279,16 @@ By adding a simple LabID to each lab PKA, aspects such as this can be identified
 
 ### The Data Store ID.  
 From the Activity Wizard, click Scripting on the left, then Data Store at the top on the right.
-![Data Store ID1](https://github.com/user-attachments/assets/cced1d45-b972-4e8a-ac63-dd26cbe25c5e)  
+![Data Store ID1](/images/Data_Store_ID1.JPG)  
 The ID from a the sample PKA is shown below.  
-![Data Store ID2](https://github.com/user-attachments/assets/befc420c-64e0-4a47-8e1f-6b4d14e910c3)  
+![Data Store ID2](images/Data_Store_ID2.JPG)  
 The name of the ID is *LabID* and its value is *DB_IntroLab1*.  This is the same for all the sample PKA's provided.
 You can add, remove or rename and ID using the options highlighted above.  Ensure that *.env.shared* reflects the name of your ID.  You can also specify the name of the ID on the command line.
 
 
 ## How it works.
 Cisco's IPC API, which is is written in Java is an extensive API for managing all aspects of Packet Tracer.  The PKA Marker includes a subset of this API (written in Python) which is enough to authenticate to Packet Tracer both as an external application as well as to the PKA itself.  The Python implementation provides the ability to load a PKA in Packet Tracer, get the name and email address of the student who submitted the PKA, run the connectivity tests, obtain a score and close the file.  
-![Communication between PKA Marker and Packet Tracer](https://github.com/user-attachments/assets/b5ac1007-319a-4cff-85f6-f21a11043a22)
+![Communication between PKA Marker and Packet Tracer](images/Communication_between_PKA_Marker_and_Packet_Tracer.jpg)
 
 PKA Marker initially tests the connection to the port that Packet Tracer is configured to listen to.  As long as the test is successful, PKA Marker then negotiates (well, asks nicely) the terms to be used for further communication.  Passwords are not transferred in plain text.  PKA Marker does not send PTMP keep-alives.  Once the connection has been negotiated, the ExApp (PKA Marker) needs to authenticate to Packet Tracer.
 
