@@ -1,11 +1,11 @@
 # Overview.
-PKA Marker is a Cisco PKA (Packet Tracer Activity) file marker appliction implemented in Python.  PKA Marker uses an independently written Python version of Cisco's PTMP (Packet Tracer Messaging Protocol) to communicate with Packet Tracer's Inter Process Communication (IPC).  
+PKA Marker is a Cisco PKA (Packet Tracer Activity) file marker application implemented in Python.  PKA Marker uses an independently written Python version of Cisco's PTMP (Packet Tracer Messaging Protocol) to communicate with Packet Tracer's Inter Process Communication (IPC).  
 
-The PKA Marker positions academic or technical training staff who are either not using Cisco's marking process or who are considering alternatives to automate the marking of PKA files.  It provides functionaility not provided by Cisco's current marking solution.
+The PKA Marker positions academic or technical training staff who are either not using Cisco's marking process or who are considering alternatives to automate the marking of PKA files.  It provides functionality not provided by Cisco's current marking solution.
 
-The PKA Marker can display the results in the console (shell) as well as outputting the results to a CSV file.  The CSV can be uploded to a VLE.
+The PKA Marker can display the results in the console (shell) as well as outputting the results to a CSV file.  The CSV can be uploaded to a VLE.
 
-In addition to Cisco's marking process, the PKA Marker addreses maintaining academic integrity in the marking of PKA files.
+In addition to Cisco's marking process, the PKA Marker addresses maintaining academic integrity in the marking of PKA files.
 
 The PKA Marker offers an alternative for marking Cisco NetAcad PKA files as well as custom created PKA files. 
 
@@ -88,7 +88,7 @@ This assumes all the files from GitHub have been downloaded.
 
 
 ## Command line options.
-The command line options allow some of the settings stored in configuration files to be overriden.  See [Configuration file options](#configuration-file-options) for details.
+The command line options allow some of the settings stored in configuration files to be overridden.  See [Configuration file options](#configuration-file-options) for details.
 The command line options can be seen by running *pka_marker* with `--help` or `-h`
 <pre>
 options:
@@ -126,7 +126,7 @@ See the section below which covers the use of a Lab ID.
 
 - `--pka-file` allows PKA Marker to mark a single PKA file rather than a directory containing multiple PKAs.
 
-- `--score-rounding-dp` allows `SCORE_ROUNDING_DP` in *.env.shared* to be overridden. In the PT Activity window in Packet Tracer, the lab score is displayed as an integer percentage (where Show Score Pecentage is selected in Activity Wizard/Answer Network Setting section).
+- `--score-rounding-dp` allows `SCORE_ROUNDING_DP` in *.env.shared* to be overridden. In the PT Activity window in Packet Tracer, the lab score is displayed as an integer percentage (where Show Score Percentage is selected in Activity Wizard/Answer Network Setting section).
 
 - `--test-connection` tests the connection to the port that Packet Tracer is expected to be listening on.  No PKA's are marked.
 
@@ -136,7 +136,7 @@ Debug logging shows the API level interaction between PKA Marker and Packet Trac
 - `--version` shows the current version of PKA Marker.  
 
 ## Configuration file options.
-The *.env.shared* configuration file allow for longer term options to be set but most of these can be overriden using the command line.
+The *.env.shared* configuration file allow for longer term options to be set but most of these can be overridden using the command line.
 
 *.env.shared*
 <pre>
@@ -247,13 +247,13 @@ Click PKA Marker
 
 ## Background.
 
-At an academic institution in Christchurch in New Zealand, the first year networking course is CCNA1.  In 2023, after raising concern that the answers to the Cisco NetAcad PKA labs are widely available, the author created new PKA labs for the course as well as interactive Moodle labs that tested both practical skills (using both Packet Tracer and the extensive rack mounted Cisco equipment in the room adjacent to the labs) as well as subject theory. Prior to this, students were expected to record their lab findings in the lab book which was manually marked at the end of the semester.  
+At an academic institution in Christchurch in New Zealand, the first-year networking course is CCNA1.  In 2023, after raising concern that the answers to the Cisco NetAcad PKA labs are widely available, the author created new PKA labs for the course as well as interactive Moodle labs that tested both practical skills (using both Packet Tracer and the extensive rack mounted Cisco equipment in the room adjacent to the labs) as well as subject theory. Prior to this, students were expected to record their lab findings in the lab book which was manually marked at the end of the semester.  
 
-The immediate benefits of the change were that the students could see their lab score in the PKA and in Moodle (VLE) when they submitted their answers for the interactive online labs.  Students responded well to the move and the staff noted a positive change in engagement.  This did however mean that the marks from the new PKA labs had to be recorded and while staff within the team were happy on a class by class basis to manually enter them, the author had already started the automated PKA marking process initially using Java.  Eventually the solution was rewritten in Python.  
+The immediate benefits of the change were that the students could see their lab score in the PKA and in Moodle (VLE) when they submitted their answers for the interactive online labs.  Students responded well to the move and the staff noted a positive change in engagement.  This did however mean that the marks from the new PKA labs had to be recorded and while staff within the team were happy on a class-by-class basis to manually enter them, the author had already started the automated PKA marking process initially using Java.  Eventually the solution was rewritten in Python.  
 
-From the outset, addressing academic integrity aspects was paramount.  In the Packet Tracer's Activity Wizard, the combination of using the 'User Profile Locking' and 'No Guest Profile' settings ensures a student can't give a completed lab to another student who can then claim it as their work.  If the second student tries to change the name in the profile, the lab resets back to the start.  'No Guest Profile' ensures that a name must be entered.  The students were instructed to enter their email addresses as well as ths field was used to identify them in the VLE so their score can be assigned to them when the CSV file for the lab was uploaded.  
+From the outset, addressing academic integrity aspects was paramount.  In the Packet Tracer's Activity Wizard, the combination of using the 'User Profile Locking' and 'No Guest Profile' settings ensures a student can't give a completed lab to another student who can then claim it as their work.  If the second student tries to change the name in the profile, the lab resets back to the start.  'No Guest Profile' ensures that a name must be entered.  The students were instructed to enter their email addresses as well as this field was used to identify them in the VLE so their score can be assigned to them when the CSV file for the lab was uploaded.  
 
-Typically the labs were due midnight Sunday and all the marks from the submitted PKA's were uploaded to the VLE by 10:00 on Monday or earlier.  With course sizes between 80 and 120, the manual effort here would have been significant without a degree of automation. This meant that the students knew exacly where they stood course mark wise week by week which they appreciated.
+The labs were due midnight Sunday and all the marks from the submitted PKA's were uploaded to the VLE by 10:00 on Monday or earlier.  With course sizes between 80 and 120, the manual effort here would have been significant without a degree of automation. This meant that the students knew exactly where they stood course mark wise week by week which they appreciated.
 
 To see this, select Activity Wizard from the Extensions menu in Packet Tracer. Click Answer Network on the left, then Settings on the right.
 ![Locking user profile and no guest profile](images/Locking_user_profile_and_no_guest_profile.JPG)
@@ -328,7 +328,7 @@ You might notice that one of the sample PKA files leaves the *User Profile* GUI 
 
 If Packet Tracer is run using the --no-gui option, the GUI windows 'Please wait.  Opening file...' followed by "PT Activity" are shown. The Packet Tracer team have been made aware of this.
 
-Very occasonally during development in the last few years, it was observed that PKA Marker could not connect to Packet Tracer on port 39000 locally.  In that intance, the GUI in Packet Tracer reported that it had incremented the currently used listening port by a few ports.  The author assumes the currently available port had been stored in one of the Packet Tracer (not PKA Marker) configuration files because after deleting those files and restarting Packet Tracer, it returned it to listening on the default port 39000.  In the last 3 years, this has only been observed twice (out of Packet Tracer being run thousands of times) and so is quite rare.
+Very occasionally during development in the last few years, it was observed that PKA Marker could not connect to Packet Tracer on port 39000 locally.  In that instance, the GUI in Packet Tracer reported that it had incremented the currently used listening port by a few ports.  The author assumes the currently available port had been stored in one of the Packet Tracer (not PKA Marker) configuration files because after deleting those files and restarting Packet Tracer, it returned it to listening on the default port 39000.  In the last 3 years, this has only been observed twice (out of Packet Tracer being run thousands of times) and so is quite rare.
 
 ## Testing and development.
 All testing and development was done using Packet Tracer 8.2.2 and 9.0.0 Open Beta (Build 680) on Windows 10 with Python 3.12 and 3.13, Wireshark, VSCode and NotePad++.  
