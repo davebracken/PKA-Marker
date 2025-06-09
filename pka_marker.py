@@ -21,10 +21,9 @@ import uuid
 
 from dotenv import dotenv_values
 
-from pt_constants import *
-from ptmp_constants import *
-
-from py_ptmp import *
+import pt_constants
+import ptmp_constants
+import py_ptmp
 
 environment_config = {
         **dotenv_values('.env.secret'),
@@ -34,6 +33,8 @@ environment_config = {
 AUTHENTICATION_REQUEST_ID = environment_config['AUTHENTICATION_REQUEST_ID']
 DATA_STORE_OBJECT_LAB_ID = environment_config['DATA_STORE_OBJECT_LAB_ID']
 EXAPP_PASSWORD = environment_config['EXAPP_PASSWORD']
+GUEST_FILENAME = environment_config['GUEST_FILENAME']
+GUEST_NAME = environment_config['GUEST_NAME']
 LOG_FILE = environment_config['LOG_FILE']
 PKA_LAB_PASSWORD = environment_config['PKA_LAB_PASSWORD']
 PKA_BASE_DIR = environment_config['PKA_BASE_DIR']
@@ -42,8 +43,13 @@ PT_PORT = int(environment_config['PT_PORT'])
 SCORE_ROUNDING_DP = int(environment_config['SCORE_ROUNDING_DP'])
 RESULTS_CSV_FILE = environment_config['RESULTS_CSV_FILE']
 SIM_TIME_ADVANCEMENT = int(environment_config['SIM_TIME_ADVANCEMENT'])
+USE_DEFAULT_RESULTS_FILE = environment_config['USE_DEFAULT_RESULTS_FILE'].lower() == 'true'
+USE_GUEST_FILE = environment_config['USE_GUEST_FILE'].lower() == 'true'
+
+LOGGING_SEPARATOR = '-' * 40
+NAME_IDX = 0
 REQD_MAJOR_VER, REQD_MINOR_VER = 3, 6
-VERSION = '1.0.1'
+VERSION = '1.1.0'
 
 
 class ArgumentValidationError(Exception):
@@ -56,7 +62,6 @@ class PythonVersionError(Exception):
     pass
 
 class WideRawHelpFormatter(argparse.RawDescriptionHelpFormatter, argparse.ArgumentDefaultsHelpFormatter):
-# class WideHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
     """ Custom help formatter to allow for wider help text. """
 
     def __init__(self, prog):
@@ -78,7 +83,7 @@ def test_pt_connection():
         bool: True if the connection and subsequent disconnection to Packet Tracer are successful, otherwise False.
     """
 
-    test_sender = PDUSender(PT_HOST, PT_PORT)
+    test_sender = py_ptmp.PDUSender(PT_HOST, PT_PORT)
 
     test_sender.connect()
     if test_sender.is_connected():
@@ -129,7 +134,7 @@ def close_pka_file(aw):
 
     # This will position us to iterate through a list of PKA files 
 
-    closed_status = aw.file_new(PTMP_NO_CONFIRMATION)
+    closed_status = aw.file_new(ptmp_constants.PTMP_NO_CONFIRMATION)
     logger.debug(f'Received {closed_status=}')
     logger.debug(LOGGING_SEPARATOR)
 
@@ -143,13 +148,13 @@ def negotiate_connection(pdu_sender):
     app_uuid = str(uuid.uuid4())
     current_time = get_current_time()
 
-    # PTMP identifier: PTMP, PTMP ver 1, text encoding, no compression, MD5 has for authentication, no keep alive
-    negotiation_pdu = ConnectionNegotiationPDU(PTMP_IDENTIFIER, PTMP_VERSION, app_uuid, PTMP_ENCODING_TEXT, PTMP_NO_ENCRYPTION,
-                                                PTMP_NO_COMPRESSION, PTMP_AUTHENTICATION_MD5, current_time, PTMP_KEEP_ALIVE, PTMP_RESERVED)
+    # ptmp_constants.PTMP identifier: ptmp_constants.PTMP, ptmp_constants.PTMP ver 1, text encoding, no compression, MD5 has for authentication, no keep alive
+    negotiation_pdu = py_ptmp.ConnectionNegotiationPDU(ptmp_constants.PTMP_IDENTIFIER, ptmp_constants.PTMP_VERSION, app_uuid, ptmp_constants.PTMP_ENCODING_TEXT, ptmp_constants.PTMP_NO_ENCRYPTION,
+                                                ptmp_constants.PTMP_NO_COMPRESSION, ptmp_constants.PTMP_AUTHENTICATION_MD5, current_time, ptmp_constants.PTMP_KEEP_ALIVE, ptmp_constants.PTMP_RESERVED)
 
-    # As a test, use PTMP_AUTHENTICATION_CLEAR_TEXT
-    # negotiation_pdu = ConnectionNegotiationPDU(PTMP_IDENTIFIER, PTMP_VERSION, app_uuid, PTMP_ENCODING_TEXT, PTMP_NO_ENCRYPTION,
-    #                                             PTMP_NO_COMPRESSION, PTMP_AUTHENTICATION_CLEAR_TEXT, current_time, PTMP_KEEP_ALIVE, PTMP_RESERVED)
+    # As a test, use ptmp_constants.PTMP_AUTHENTICATION_CLEAR_TEXT
+    # negotiation_pdu = ConnectionNegotiationPDU(ptmp_constants.PTMP_IDENTIFIER, ptmp_constants.PTMP_VERSION, app_uuid, ptmp_constants.PTMP_ENCODING_TEXT, ptmp_constants.PTMP_NO_ENCRYPTION,
+    #                                             ptmp_constants.PTMP_NO_COMPRESSION, ptmp_constants.PTMP_AUTHENTICATION_CLEAR_TEXT, current_time, ptmp_constants.PTMP_KEEP_ALIVE, ptmp_constants.PTMP_RESERVED)
 
     negotiation_pdu.build_pdu()
     logger.debug(f'{negotiation_pdu.pdu=}')
@@ -170,9 +175,9 @@ def negotiate_connection(pdu_sender):
     # reply_pdu = ConnectionNegotiationPDU(negotiation_reply[2], int(negotiation_reply[3]), negotiation_reply[4], int(negotiation_reply[5]), int(negotiation_reply[6]),
     #                                        int(negotiation_reply[7]), int(negotiation_reply[8]), negotiation_reply[9], int(negotiation_reply[10]), negotiation_reply[11])
     
-    reply_pdu = ConnectionNegotiationPDU(negotiation_reply[PTMP_IDENTIFIER_IDX], int(negotiation_reply[PTMP_VERSION_IDX]), negotiation_reply[APP_UUID_IDX], int(negotiation_reply[PTMP_ENCODING_TEXT_IDX]),
-                                         int(negotiation_reply[PTMP_NO_ENCRYPTION_IDX]), int(negotiation_reply[PTMP_NO_COMPRESSION_IDX]), int(negotiation_reply[PTMP_AUTHENTICATION_MD5_IDX]),
-                                         negotiation_reply[CURRENT_TIME_IDX], int(negotiation_reply[PTMP_KEEP_ALIVE_IDX]), negotiation_reply[PTMP_RESERVED_IDX])
+    reply_pdu = py_ptmp.ConnectionNegotiationPDU(negotiation_reply[ptmp_constants.PTMP_IDENTIFIER_IDX], int(negotiation_reply[ptmp_constants.PTMP_VERSION_IDX]), negotiation_reply[ptmp_constants.APP_UUID_IDX], int(negotiation_reply[ptmp_constants.PTMP_ENCODING_TEXT_IDX]),
+                                         int(negotiation_reply[ptmp_constants.PTMP_NO_ENCRYPTION_IDX]), int(negotiation_reply[ptmp_constants.PTMP_NO_COMPRESSION_IDX]), int(negotiation_reply[ptmp_constants.PTMP_AUTHENTICATION_MD5_IDX]),
+                                         negotiation_reply[ptmp_constants.CURRENT_TIME_IDX], int(negotiation_reply[ptmp_constants.PTMP_KEEP_ALIVE_IDX]), negotiation_reply[ptmp_constants.PTMP_RESERVED_IDX])
     
     # Did the server agree with the client?
     negotiated_status = reply_pdu == negotiation_pdu
@@ -184,7 +189,7 @@ def negotiate_connection(pdu_sender):
 def authenticate_as_exaxpp(pdu_sender):
     """ Authenticate as the ExApp (PT external application).  Returns True if the password is confirmed, False otherwise. """
 
-    pdu_msg = f'!{PTMP_MESSAGE_TYPE_AUTHENTICATION_REQUEST}!{AUTHENTICATION_REQUEST_ID}!'
+    pdu_msg = f'!{ptmp_constants.PTMP_MESSAGE_TYPE_AUTHENTICATION_REQUEST}!{AUTHENTICATION_REQUEST_ID}!'
     msg_length = len(pdu_msg) - 1
     pdu = f'{msg_length}{pdu_msg}'.replace('!','\x00').encode()
 
@@ -194,7 +199,7 @@ def authenticate_as_exaxpp(pdu_sender):
     challenge_reply = reply.decode().split('\x00')
     logger.debug(f'{challenge_reply=}')
 
-    challenge = challenge_reply[PTMP_EXAPP_CHALLENGE_IDX]
+    challenge = challenge_reply[ptmp_constants.PTMP_EXAPP_CHALLENGE_IDX]
     logger.debug(f'{challenge=}')
 
     message = challenge + EXAPP_PASSWORD
@@ -202,7 +207,7 @@ def authenticate_as_exaxpp(pdu_sender):
     logger.debug(f'{hashed_pwd=}')
     logger.debug(f'{hashed_pwd.upper()=}')
 
-    challenge_reply_msg = f'!{PTMP_MESSAGE_TYPE_AUTHENTICATION_RESPONSE}!{AUTHENTICATION_REQUEST_ID}!{hashed_pwd.upper()}!{PTMP_TYPE_VALUE_VOID}!'
+    challenge_reply_msg = f'!{ptmp_constants.PTMP_MESSAGE_TYPE_AUTHENTICATION_RESPONSE}!{AUTHENTICATION_REQUEST_ID}!{hashed_pwd.upper()}!{ptmp_constants.PTMP_TYPE_VALUE_VOID}!'
     challenge_reply_msg_length = len(challenge_reply_msg) - 1
     challenge_reply_pdu = f'{challenge_reply_msg_length}{challenge_reply_msg}'.replace('!','\x00').encode()
     logger.debug(challenge_reply_pdu.decode())
@@ -212,11 +217,11 @@ def authenticate_as_exaxpp(pdu_sender):
     reply = challenge_reply.decode().split('\x00')
     logger.debug(f'Received {reply=}')
 
-    # assert int(reply[1]) == PTMP_MESSAGE_TYPE_AUTHENTICATION_STATUS
+    # assert int(reply[1]) == ptmp_constants.PTMP_MESSAGE_TYPE_AUTHENTICATION_STATUS
     # exapp_authenticated = True if reply[2] == 'true' else False
     # return exapp_authenticated
 
-    return True if reply[EXAPP_AUTHENTICATION_STATUS_IDX] == PTMP_CONFIRMATION else False
+    return True if reply[ptmp_constants.EXAPP_AUTHENTICATION_STATUS_IDX] == ptmp_constants.PTMP_CONFIRMATION else False
 
 
 def authenticate_to_pka(active_file):
@@ -314,7 +319,7 @@ def get_personal_details():
     """ Get the student full name and email address from the lab PKA file.  Returns a tuple of the full name and email address. """
 
     # Build a UserProfile to get the student details from the lab PKA file
-    up = UserProfile()
+    up = py_ptmp.UserProfile()
 
     # Get student full name
     full_name = up.get_name().strip()
@@ -389,8 +394,8 @@ def get_lab_score_metrics(active_file):
 def advance_simulation_timer():
     """ Advance the simulation timer by 30 PT seconds. """
 
-    sim = Simulation()
-    real_time_toolbar = GetRealtimeToolbar()
+    sim = py_ptmp.Simulation()
+    real_time_toolbar = py_ptmp.GetRealtimeToolbar()
 
     sim_time = sim.get_current_sim_time()
     logger.debug(f'{sim_time=}') 
@@ -409,14 +414,14 @@ def get_lab_activity(active_file):
     forward_sim_time_counter = 1
     lab_score = 0
 
-    while (forward_sim_time_counter < SIM_TIME_ADVANCEMENT) and (lab_score != MAX_LAB_SCORE):
+    while (forward_sim_time_counter < SIM_TIME_ADVANCEMENT) and (lab_score != pt_constants.MAX_LAB_SCORE):
 
         lab_score = get_lab_score(active_file)
         logger.debug(f'{lab_score=}')
         logger.debug(LOGGING_SEPARATOR)
         logger.debug(f'Current lab score is {lab_score} in {forward_sim_time_counter} of {SIM_TIME_ADVANCEMENT} iterations.') 
         
-        if lab_score == MAX_LAB_SCORE:
+        if lab_score == pt_constants.MAX_LAB_SCORE:
             logger.debug(f'Got maximum lab score in {forward_sim_time_counter} iteration(s).') 
         else:
             # Possibly not the highest score available so lets advance the simulation timer and run a connectivity test.
@@ -441,7 +446,7 @@ def process_pka_file(pka_filename, data_store_id):
     Returns a tuple of the student details, lab score and lab ID."""
 
     pka_processed_status = False
-    pdu_sender = PDUSender(PT_HOST, PT_PORT)
+    pdu_sender = py_ptmp.PDUSender(PT_HOST, PT_PORT)
     pdu_sender.connect()
 
     if pdu_sender.is_connected():
@@ -465,17 +470,17 @@ def process_pka_file(pka_filename, data_store_id):
             if exapp_authenticated:
 
                 # pt_ipc = PacketTracerIPC()
-                PacketTracerIPC.pdu_sender = pdu_sender
+                py_ptmp.PacketTracerIPC.pdu_sender = pdu_sender
                 
-                app_window = AppWindow()
+                app_window = py_ptmp.AppWindow()
                 
                 # Open the PKA file
                 file_open_status = open_pka_file(pka_filename, app_window)
 
                 # file_open method returns 0 for success, 6 (UNABLE_TO_READ_FILE) for bad.pka
-                if file_open_status == FILE_OPEN_OK:
+                if file_open_status == ptmp_constants.FILE_OPEN_OK:
                     # PKA file has been opened
-                    af = ActiveFile()
+                    af = py_ptmp.ActiveFile()
                     
                     # Just for testing.  Is the lab password confirmed?  It shouldn't be at this point.
                     password_confirmed_status = get_authentication_status(af)
@@ -551,7 +556,7 @@ def process_pka_file(pka_filename, data_store_id):
 def get_pka_files(pka_files_dir):
     """ Get the PKA files from the pka_files_dir.  Returns a list of PKA files. """
 
-    pka_files = glob.glob(rf'{pka_files_dir}\*.{PKA_FILETYPE}')
+    pka_files = glob.glob(rf'{pka_files_dir}\*.{pt_constants.PKA_FILETYPE}')
     file_count = len(pka_files)
     file_msg = 'file' if file_count == 1 else 'files'
     logger.info(f'Found {file_count} PKA {file_msg} in {pka_files_dir}')
@@ -595,6 +600,8 @@ def get_results(pka_files, data_store_id, score_rounding_dp):
 
             if data_store_id:
                 row.append(info.lab_id)
+
+            row.append(pka_file)  
             
             yield row
         else:
@@ -604,7 +611,7 @@ def get_results(pka_files, data_store_id, score_rounding_dp):
     return None
 
 
-def output_results(pka_files, data_store_id, results_csv_file, no_csv, no_console, score_rounding_dp):
+def output_results(pka_files, data_store_id, results_csv_file, no_console, score_rounding_dp, guest_filename):
     """ Output the results to a CSV file or console. """	
 
     headers = ['student_full_name', 'student_email_addr', 'lab_score', 'rounded_lab_score']
@@ -617,22 +624,35 @@ def output_results(pka_files, data_store_id, results_csv_file, no_csv, no_consol
         print(','.join(headers))
     
     # If output to a CSV is required, write the headers to the file
-    if not no_csv:
+    if results_csv_file:
         logger.debug(f'Writing results to {results_csv_file}') 
         csv_file = open(results_csv_file, mode='w', newline='') 
         csv_writer = csv.writer(csv_file, delimiter=',')
         csv_writer.writerow(headers)
 
+    if guest_filename:
+        guest_file = open(guest_filename, mode='w', newline='') 
+
     # Get the result generator and output the results as required
     for result in get_results(pka_files, data_store_id, score_rounding_dp):
-        if not no_console:
-            print(','.join(str(item) for item in result))
+
+        guest_found = result[NAME_IDX] == GUEST_NAME 
         
-        if not no_csv:
-            csv_writer.writerow(result)
+        # Direct the results to the appropriate output
+        if guest_found and guest_filename:
+            guest_pka_filename = Path(result[-1]).name
+            guest_file.write(f'{guest_pka_filename}\n')
+        elif not guest_found and results_csv_file or guest_found and not guest_filename:
+            csv_writer.writerow(result[:-1])
+        
+        if not no_console:
+            print(','.join(str(item) for item in result[:-1]))
     
-    if not no_csv:
+    if results_csv_file:
         csv_file.close()
+    
+    if guest_filename:
+        guest_file.close()
 
     return None
 
@@ -643,48 +663,49 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description=f'Super Duper Automagic PKA marker.\nDave Bracken.\nVersion: {VERSION}\n',
         allow_abbrev=False,
-        formatter_class=WideRawHelpFormatter
+        formatter_class=WideRawHelpFormatter,
+        argument_default=argparse.SUPPRESS 
     )
 
-    parser.add_argument('--data-store-id', type=str, help='Data store ID to use for lab ID.')
-    parser.add_argument('--log-file', type=str, help='Path to log file.  This enables the verbose option.')
-    parser.add_argument('--no-console', action='store_true', help='Disable console output.', default=False)
-    parser.add_argument('--no-csv', action='store_true', help='Send results to the console, not CSV.')
-    parser.add_argument('--no-lab-id', action='store_true', help='Do not include the Lab ID.', default=False)
-    parser.add_argument('--output-file', type=str, help='Path to output CSV file.')
-    parser.add_argument('--pka-dir', type=str, help='Path to directory containing PKA files to process.')
-    parser.add_argument('--pka-file', type=str, help='Path to a single PKA file to process.')
-    parser.add_argument('--score-rounding-dp', type=int, help='Number of decimal places to round the lab score.', default=SCORE_ROUNDING_DP)
-    parser.add_argument('--test-connection', action='store_true', help='Test connection to Packet Tracer without marking PKAs.', default=False)
-    parser.add_argument('--verbose', '-v', action='store_true', help='Enable verbose logging.', default=False)
+    results_group = parser.add_mutually_exclusive_group(required=False)
+    lab_id_group = parser.add_mutually_exclusive_group(required=False)
+    pka_group = parser.add_mutually_exclusive_group(required=False)
+    guest_group = parser.add_mutually_exclusive_group(required=False)
+
+    lab_id_group.add_argument('--data-store-id', type=str, help='Data store ID to use for lab ID.')
+    guest_group.add_argument('--guest-file', type=str, help='Guest filename.')
+    parser.add_argument('--log-file', type=str, help='Path to the debug log file.  This enables the verbose option.')
+    results_group.add_argument('--no-console', action='store_true', help='Disable console output.')
+    results_group.add_argument('--no-csv', action='store_true', help='Send results to the console, not CSV.')
+    guest_group.add_argument('--no-guest-file', action='store_true', help='Do not use the guest file.  Save Guest scores to results CSV file.')
+    lab_id_group.add_argument('--no-lab-id', action='store_true', help='Do not include the Lab ID.')
+    pka_group.add_argument('--pka-dir', type=str, help='Path to directory containing PKA files to process.')
+    pka_group.add_argument('--pka-file', type=str, help='Path to a single PKA file to process.')
+    parser.add_argument('--results-file', type=str, help='Results CSV filename.')
+    parser.add_argument('--score-rounding-dp', type=int, help='Number of decimal places to round the lab score.')
+    parser.add_argument('--test-connection', action='store_true', help='Test connection to Packet Tracer without marking PKAs.')
+    parser.add_argument('--use-default-results-file', action='store_true', help='Use the PKA directory name as the name of the results CSV file.')
+    parser.add_argument('--verbose', '-v', action='store_true', help='Enable verbose logging.')
     parser.add_argument('--version', '-V', action='version', version=f'%(prog)s {VERSION}', help='Show program version.')
-    
+
     return parser.parse_args()
 
 
 def validate_args(args):
-    """ Validate mutually exclusive command line arguments. """
+    """ Validate command line arguments and check for mutually exclusive conflict. """
 
-    if args.pka_file and args.pka_dir:
-        raise ArgumentValidationError('Specify either --pka-file or --pka-dir.')
-
-    if args.pka_file and not Path(args.pka_file).is_file():
+    if hasattr(args, 'pka_file') and not Path(args.pka_file).is_file():
         raise ArgumentValidationError(f'PKA file {args.pka_file} does not exist.')
 
-    if args.pka_dir and not Path(args.pka_dir).is_dir():
+    if hasattr(args, 'pka_dir') and not Path(args.pka_dir).is_dir():
         raise ArgumentValidationError(f'PKA directory {args.pka_dir} does not exist.')
 
-    if args.output_file and not Path(args.output_file).parent.is_dir():
-        raise ArgumentValidationError(f'Output directory {Path(args.output_file).parent} does not exist.')
+    if hasattr(args, 'results_file') and not Path(args.results_file).parent.is_dir():
+        raise ArgumentValidationError(f'Output directory {Path(args.results_file).parent} does not exist.')
     
-    if args.output_file and args.no_csv:
-        raise ArgumentValidationError('Cannot specify both --output-file and --no-csv.')
-
-    if args.no_lab_id and args.data_store_id:
-        raise ArgumentValidationError('Cannot specify both --no-lab-id and --data-store-id.')
-    
-    if args.no_console and args.no_csv:
-        raise ArgumentValidationError('Cannot specify both --no-console and --no_csv-.')
+    # Check for mutually exclusive arguments that argparse does not support due to mixed types.
+    if hasattr(args, 'results_file') and hasattr(args, 'no_csv'):
+        raise ArgumentValidationError('Cannot specify both --results-file and --no-csv.')
     
     return None
 
@@ -710,16 +731,20 @@ def main():
         print(f'Argument error: {e}')
         sys.exit(1)
 
-    # Enable verbose logging when log file has been specified.
-    if args.log_file:
-        args.verbose = True
+    if hasattr(args, 'log_file'):
+        log_file = args.log_file
     else:
-        args.log_file = LOG_FILE
+        log_file = LOG_FILE
 
-    setup_logging(args.verbose, args.log_file)
+    if hasattr(args, 'verbose') or hasattr(args, 'log_file'):
+        verbose = True
+    else:
+        verbose = False
 
-    if args.test_connection:
-        # Test connection to Packet Tracer and exit
+    setup_logging(verbose, log_file)
+
+    # Test connection to Packet Tracer if requested.
+    if hasattr(args, 'test_connection'):
         connection_status = test_pt_connection()
         if connection_status:
             print(f'Packet Tracer is available on {PT_HOST}:{PT_PORT}.')
@@ -727,36 +752,78 @@ def main():
             print(f'Packet Tracer is not available on {PT_HOST}:{PT_PORT}.')
         sys.exit(0)
 
-    if args.output_file:
-        results_csv_file = args.output_file  
-    else:
-        results_csv_file = str(Path(PKA_BASE_DIR) / RESULTS_CSV_FILE)
+    # Set the results CSV file name.
+    results_csv_file = None
 
-    if args.pka_dir:
+    if hasattr(args, 'results_file'):
+        results_csv_file = args.results_file
+    elif hasattr(args, 'no_csv'):
+        # No CSV output requested
+        results_csv_file = None  
+    else:
+        # Determine the base directory for the results file
+        if hasattr(args, 'pka_file'):
+            base_dir = Path(args.pka_file).parent
+        elif hasattr(args, 'pka_dir'):
+            base_dir = Path(args.pka_dir)
+        else:
+            base_dir = Path(PKA_BASE_DIR)
+
+        if USE_DEFAULT_RESULTS_FILE or hasattr(args, 'use_default_results_file'):
+            # Use the directory name as the CSV filename
+            results_csv_file = str(base_dir / f'{base_dir.name}.csv')
+        else:
+            results_csv_file = str(base_dir / RESULTS_CSV_FILE)
+
+    # Set the PKA files directory.
+    if hasattr(args, 'pka_file'):
+        pka_files_dir = args.pka_file
+    elif hasattr(args, 'pka_dir'):
         pka_files_dir = args.pka_dir
     else:
         pka_files_dir = PKA_BASE_DIR
   
-    if args.no_lab_id:
+    # Set the data store ID if requested.
+    if hasattr(args, 'no_lab_id'):
         data_store_id = None
-    elif args.data_store_id:
+    elif hasattr(args, 'data_store_id'):
         data_store_id = args.data_store_id 
     elif DATA_STORE_OBJECT_LAB_ID:
         data_store_id = DATA_STORE_OBJECT_LAB_ID
     else:
         data_store_id = None
 
-    if args.score_rounding_dp:
+    # Set the score rounding decimal places.
+    if hasattr(args, 'score_rounding_dp'):
         score_rounding_dp = args.score_rounding_dp  
     else:
         score_rounding_dp = SCORE_ROUNDING_DP
 
+    # Generate a path to the guest file if requested.
+    if hasattr(args, 'guest_file'):
+        preferred_guest_filename = args.guest_file
+    else:
+        preferred_guest_filename = GUEST_FILENAME
+
+    if hasattr(args, 'no_guest_file') or not USE_GUEST_FILE:
+        guest_filename = None
+    elif hasattr(args, 'pka_file'):
+        guest_filename = str(Path(args.pka_file).parent / preferred_guest_filename)
+    elif hasattr(args, 'pka_dir') and not hasattr(args, 'no_csv'):
+        guest_filename = str(Path(args.pka_dir) / preferred_guest_filename)
+    else:
+        guest_filename = str(Path(PKA_BASE_DIR) / preferred_guest_filename)
+    logger.debug(f'{guest_filename=}')
+
+    # Suppress console output if requested.
+    if hasattr(args,'no_console'):
+        no_console = True
+    else:
+        no_console = False
+
     connection_status = test_pt_connection()
     if connection_status:
         logger.debug('Packet Tracer is available.')
-
-        if args.pka_file:
-            pka_files_dir = args.pka_file
 
         # PT needs an absolute path for the PKA file.
         if not Path(pka_files_dir).is_absolute():
@@ -764,7 +831,7 @@ def main():
             pka_files_dir = Path.cwd() / pka_files_dir
 
         # Get file or files to process.  
-        if args.pka_file:
+        if hasattr(args, 'pka_file'):
             pka_files = [pka_files_dir]
         else:
             pka_files = get_pka_files(pka_files_dir)
@@ -772,9 +839,9 @@ def main():
         file_count = len(pka_files)
 
         if file_count > 0:        
-            output_results(pka_files, data_store_id, results_csv_file, args.no_csv, args.no_console, score_rounding_dp)
+            output_results(pka_files, data_store_id, results_csv_file, no_console, score_rounding_dp, guest_filename)
         else: 
-            logger.error(f'No PKA files found: {pka_files if args.pka_file else pka_files_dir}')
+            logger.error(f'No PKA files found: {pka_files if hasattr(args,'pka_file') else pka_files_dir}')
     else:
         logger.error(f'Test connection could not sucessfully connect and disconnect from Packet Tracer.')
 
