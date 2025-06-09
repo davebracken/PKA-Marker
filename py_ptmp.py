@@ -4,7 +4,7 @@
 import socket
 import logging
 
-from ptmp_constants import *
+import ptmp_constants
 
 logger = logging.getLogger()
 
@@ -62,7 +62,7 @@ class PDUSender():
     
         logger.debug(f'Sending: {pdu=}')
         self.pt_socket.sendall(pdu)
-        reply = self.pt_socket.recv(PTMP_MAX_BUFFER_SIZE)
+        reply = self.pt_socket.recv(ptmp_constants.PTMP_MAX_BUFFER_SIZE)
         logger.debug(f'Received: {reply=}')
         return reply
 
@@ -109,24 +109,24 @@ class PacketTracerIPC():
 
         # ToDo Add code to support TreeNode reply type in the future
         
-        if len(reply) > PTMP_REPLY_LENGTH:
-            self.reply_length = reply[PTMP_REPLY_LENGTH_IDX]
-            self.reply_type = reply[PTMP_REPLY_TYPE_IDX]
-            self.reply_message_id  = reply[PTMP_REPLY_MESSAGE_ID_IDX]
-            self.reply_value_type = reply[PTMP_REPLY_VALUE_TYPE_IDX]
+        if len(reply) > ptmp_constants.PTMP_REPLY_LENGTH:
+            self.reply_length = reply[ptmp_constants.PTMP_REPLY_LENGTH_IDX]
+            self.reply_type = reply[ptmp_constants.PTMP_REPLY_TYPE_IDX]
+            self.reply_message_id  = reply[ptmp_constants.PTMP_REPLY_MESSAGE_ID_IDX]
+            self.reply_value_type = reply[ptmp_constants.PTMP_REPLY_VALUE_TYPE_IDX]
             if self.reply_value_type.isdigit():
-                self.reply_value_type = int(reply[PTMP_REPLY_VALUE_TYPE_IDX])
+                self.reply_value_type = int(reply[ptmp_constants.PTMP_REPLY_VALUE_TYPE_IDX])
 
-                if self.reply_value_type == PTMP_TYPE_VALUE_BOOL:
-                    self.reply_value = True if reply[PTMP_REPLY_VALUE_IDX] == PTMP_CONFIRMATION else False
-                elif self.reply_value_type == PTMP_TYPE_VALUE_INT:
-                    self.reply_value = int(reply[PTMP_REPLY_VALUE_IDX])
-                elif self.reply_value_type == PTMP_TYPE_VALUE_DOUBLE:
-                    self.reply_value = float(reply[PTMP_REPLY_VALUE_IDX])
+                if self.reply_value_type == ptmp_constants.PTMP_TYPE_VALUE_BOOL:
+                    self.reply_value = True if reply[ptmp_constants.PTMP_REPLY_VALUE_IDX] == ptmp_constants.PTMP_CONFIRMATION else False
+                elif self.reply_value_type == ptmp_constants.PTMP_TYPE_VALUE_INT:
+                    self.reply_value = int(reply[ptmp_constants.PTMP_REPLY_VALUE_IDX])
+                elif self.reply_value_type == ptmp_constants.PTMP_TYPE_VALUE_DOUBLE:
+                    self.reply_value = float(reply[ptmp_constants.PTMP_REPLY_VALUE_IDX])
                 else:
-                    self.reply_value = reply[PTMP_REPLY_VALUE_IDX]
-            elif self.reply_value_type == PTMP_TYPE_VALUE_TREENODE:
-                    self.reply_value = reply[PTMP_REPLY_VALUE_IDX]
+                    self.reply_value = reply[ptmp_constants.PTMP_REPLY_VALUE_IDX]
+            elif self.reply_value_type == ptmp_constants.PTMP_TYPE_VALUE_TREENODE:
+                    self.reply_value = reply[ptmp_constants.PTMP_REPLY_VALUE_IDX]
         else:
             self.reply_value = reply[len(reply)-1]
         logger.debug(f'{self.reply_value=} Type is {type(self.reply_value)}')
@@ -173,8 +173,10 @@ class PacketTracerIPC():
 
         logger.debug(f'api_string: {self.api_string.encode()}')
 
-        self.pdu = f'{self.pdu_length}\x00{PTMP_MESSAGE_TYPE_IPC_MESSAGE}\x00{ipc_message_id}{self.api_string}'.encode()
-
+        self.pdu = f'{self.pdu_length}\x00{ptmp_constants.PTMP_MESSAGE_TYPE_IPC_MESSAGE}\x00{ipc_message_id}{self.api_string}'.encode()
+        # Use the constant from ptmp_constants namespace
+        # self.pdu = f'{self.pdu_length}\x00{PTMP_MESSAGE_TYPE_IPC_MESSAGE}\x00{ipc_message_id}{self.api_string}'.encode()
+        self.pdu = f'{self.pdu_length}\x00{ptmp_constants.PTMP_MESSAGE_TYPE_IPC_MESSAGE}\x00{ipc_message_id}{self.api_string}'.encode()
         reply = self.pdu_sender.send(self.pdu)
         self.process_reply(reply)
         return self.reply_value
@@ -209,7 +211,7 @@ class AppWindow(PacketTracerIPC):
     def file_new(self, confirmation):
         """ fileNew in Cisco API. """
 
-        self.set_method_name('fileNew', confirmation, PTMP_TYPE_VALUE_BOOL)
+        self.set_method_name('fileNew', confirmation, ptmp_constants.PTMP_TYPE_VALUE_BOOL)
         self.send_message()
         return self.reply_value
 
@@ -217,7 +219,7 @@ class AppWindow(PacketTracerIPC):
     def file_open(self, filename):
         """ fileOpen in Cisco API. """
 
-        self.set_method_name('fileOpen', filename, PTMP_TYPE_VALUE_STRING)
+        self.set_method_name('fileOpen', filename, ptmp_constants.PTMP_TYPE_VALUE_STRING)
         self.send_message()
         return self.reply_value
 
@@ -268,7 +270,7 @@ class ActiveFile(AppWindow):
     def confirm_password(self, password):
         """confirmPassword in Cisco API. """
 
-        self.set_method_name('confirmPassword', password, PTMP_TYPE_VALUE_STRING)
+        self.set_method_name('confirmPassword', password, ptmp_constants.PTMP_TYPE_VALUE_STRING)
         self.send_message()
         return self.reply_value
 
@@ -276,7 +278,7 @@ class ActiveFile(AppWindow):
     def get_script_data_store(self, object_name):
         """getScriptDataStore in Cisco API. """
 
-        self.set_method_name('getScriptDataStore', object_name, PTMP_TYPE_VALUE_STRING)
+        self.set_method_name('getScriptDataStore', object_name, ptmp_constants.PTMP_TYPE_VALUE_STRING)
         self.send_message()
         return self.reply_value
 
@@ -285,7 +287,7 @@ class ActiveFile(AppWindow):
     def set_time_elapsed(self, time_val):
         """setTimeElapsed in Cisco API. """
 
-        self.set_method_name('setTimeElapsed', time_val, PTMP_TYPE_VALUE_INT)
+        self.set_method_name('setTimeElapsed', time_val, ptmp_constants.PTMP_TYPE_VALUE_INT)
         self.send_message()
         return self.reply_value
 
@@ -658,7 +660,7 @@ class ConnectionNegotiationPDU():
         self.negotiation_msg_value = f'.{self.ptmp_identifier}.{self.ptmp_version}.{{{self.app_uuid}}}.{self.ptmp_encoding_text}.{self.ptmp_no_encryption}'
         self.negotiation_msg_value += f'.{self.ptmp_no_compression}.{self.ptmp_authentication_md5}.{self.current_time}.{self.ptmp_keep_alive}.{self.ptmp_reserved}.'
         self.pdu_length = len(self.negotiation_msg_value) + 1
-        self.pdu = f'{self.pdu_length}.{PTMP_MESSAGE_TYPE_NEGOTIATION_REQUEST}{self.negotiation_msg_value}'.replace('.','\x00').encode()
+        self.pdu = f'{self.pdu_length}.{ptmp_constants.PTMP_MESSAGE_TYPE_NEGOTIATION_REQUEST}{self.negotiation_msg_value}'.replace('.','\x00').encode()
         return None 
 
 
