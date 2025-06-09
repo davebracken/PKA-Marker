@@ -79,7 +79,7 @@ This assumes all the files from GitHub have been downloaded.
    Guest,,0.0,0.0,DB_IntroLab1
    </pre>
 
-   As long as you see the above, well done, you have marked a batch of PKA's!
+   As long as you see the above, well done, you have marked a batch of PKA's!  A CSV file containing the results has been saved in the *sample_pka_files* directory.
 
    If marking your own PKA's is the next step for you, then you will need to change the PKA password (PKA_LAB_PASSWORD) in *.env.secrets* and the PKA directory (PKA_BASE_DIR) in *.env.shared* or specify the directory via the command line.
 
@@ -93,17 +93,20 @@ The command line options can be seen by running *pka_marker* with `--help` or `-
 <pre>
 options:
   -h, --help                             show this help message and exit
-  --data-store-id DATA_STORE_ID          Data store ID to use for lab ID. (default: None)
-  --log-file LOG_FILE                    Path to log file. This enables the verbose option. (default: None)
-  --no-console                           Disable console output. (default: False)
-  --no-csv                               Send results to the console, not CSV. (default: False)
-  --no-lab-id                            Do not include the Lab ID. (default: False)
-  --output-file OUTPUT_FILE              Path to output CSV file. (default: None)
-  --pka-dir PKA_DIR                      Path to directory containing PKA files to process. (default: None)
-  --pka-file PKA_FILE                    Path to a single PKA file to process. (default: None)
-  --score-rounding-dp SCORE_ROUNDING_DP  Number of decimal places to round the lab score. (default: 1)
-  --test-connection                      Test connection to Packet Tracer without marking PKAs. (default: False)
-  --verbose, -v                          Enable verbose logging. (default: False)
+  --data-store-id DATA_STORE_ID          Data store ID to use for lab ID.
+  --guest-file GUEST_FILE                Guest filename.
+  --log-file LOG_FILE                    Path to the debug log file. This enables the verbose option.
+  --no-console                           Disable console output.
+  --no-csv                               Send results to the console, not CSV.
+  --no-guest-file                        Do not use the guest file. Save Guest scores to results CSV file.
+  --no-lab-id                            Do not include the Lab ID.
+  --pka-dir PKA_DIR                      Path to directory containing PKA files to process.
+  --pka-file PKA_FILE                    Path to a single PKA file to process.
+  --results-file RESULTS_FILE            Results CSV filename.
+  --score-rounding-dp SCORE_ROUNDING_DP  Number of decimal places to round the lab score.
+  --test-connection                      Test connection to Packet Tracer without marking PKAs.
+  --use-default-results-file             Use the PKA directory name as the name of the results CSV file.
+  --verbose, -v                          Enable verbose logging.
   --version, -V                          Show program version.
 </pre>
 
@@ -111,48 +114,71 @@ options:
     In the output above, `DATA_STORE_OBJECT_LAB_ID` was set to an empty string to simplify the output. In later examples it is set to the ID used in the example PKA files which is *LabID*.
     See [data store ID](#the-data-store-id) section for details on how to modify or create data store ID's.
 
+- `--guest-file` allows `GUEST_FILENAME` specified in *.env.shared* to be overridden.
+
 - `--log-file` allows `LOG_FILE` specified in *.env.shared* to be overridden. Using `--log-file` enables verbose logging without requiring `--verbose` to be used.
 
 - `--no-console` disables console output. Output will still be sent to the CSV results file `RESULTS_CSV_FILE` specified in `.env.shared` or to the file specified in `--output-file`. `--no-console` cannot be used with `--no-csv` as this would disable all output.
 
 - `--no-csv` overrides the default value of saving the results to a CSV file, which by default is `RESULTS_CSV_FILE` in *.env.shared*
 
+- `--no-guest-file` suppresses sending instances of filenames to the guest file and writes the details gained from the PKA to the results CSV file.
+
 - `--no-lab-id` disables retrieving a value from the object store in the PKA if `DATA_STORE_OBJECT_LAB_ID` is set in *.env.shared*   
 See the section below which covers the use of a Lab ID.
-
-- `--output-file` allows `RESULTS_CSV_FILE` specified in `.env.shared` to be overridden.
 
 - `--pka-dir` allows `PKA_BASE_DIR` specified in `.env.shared` to be overridden.
 
 - `--pka-file` allows PKA Marker to mark a single PKA file rather than a directory containing multiple PKAs.
 
+- `--results-file` allows `RESULTS_CSV_FILE` specified in `.env.shared` to be overridden.
+
 - `--score-rounding-dp` allows `SCORE_ROUNDING_DP` in *.env.shared* to be overridden. In the PT Activity window in Packet Tracer, the lab score is displayed as an integer percentage (where Show Score Percentage is selected in Activity Wizard/Answer Network Setting section).
 
 - `--test-connection` tests the connection to the port that Packet Tracer is expected to be listening on.  No PKA's are marked.
+
+- `--use-default-results-file` uses the name of the PKA directory as the name of the CSV results file in that directory.  This allows a False value of `USE_DEFAULT_RESULTS_FILE` in `.env.shared` to be overridden. 
 
 - `--verbose`, `-v` enables debug logging both to the console and `LOG_FILE` specified in `.env.shared` or to `--log-file` if specified.  
 Debug logging shows the API level interaction between PKA Marker and Packet Tracer.
 
 - `--version` shows the current version of PKA Marker.  
 
+The command line options `--no-console` and `--no-csv`, `--data-store-id` and `--no-lab-id`, `--pka-dir` and `--pka-file` and `--guest-file` and `--no-guest-file` are mutually exclusive and cannot be used.
+
 ## Configuration file options.
 The *.env.shared* configuration file allow for longer term options to be set but most of these can be overridden using the command line.
 
 *.env.shared*
 <pre>
-RESULTS_CSV_FILE = 'IntroLab1.csv'
-LOG_FILE = './pka_marker.log'
-/# PKA_BASE_DIR can be an absolute or relative path
-/# PKA_BASE_DIR = 'C:\Users\Dave\Downloads\pka_marker\Sample PKA files'
+# PKA_BASE_DIR can be an absolute or relative path
+# PKA_BASE_DIR = 'C:\Users\Dave\Downloads\pka_marker\Sample PKA files'
 PKA_BASE_DIR = './Sample PKA files'
-/# Set the data store object name to the ID you have used in the PKA.
+
+# The default results CSV file is named PKA_BASE_DIR.csv in PKA_BASE_DIR
+USE_DEFAULT_RESULTS_FILE = True
+# or set to False to use a custom results file below
+RESULTS_CSV_FILE = './IntroLab1.csv'
+
+LOG_FILE = './pka_marker.log'
+
+# Set the data store object name to the ID you have used in the PKA.
 DATA_STORE_OBJECT_LAB_ID = 'LabID'
-/# Set the data store object name to an empty string to disable its use.
-/# DATA_STORE_OBJECT_LAB_ID = ''
+# Set the data store object name to an empty string to disable its use.
+# DATA_STORE_OBJECT_LAB_ID = ''
+
+# PT network settings
 PT_HOST = 'localhost'
 PT_PORT = 39000
+
 SIM_TIME_ADVANCEMENT = 6
-SCORE_DP = 1
+SCORE_ROUNDING_DP = 1
+
+# Guest file settings
+USE_GUEST_FILE = True
+GUEST_NAME = 'Guest'
+# The default guest file is created in PKA_BASE_DIR 
+GUEST_FILENAME = './guest.txt'
 </pre>
 
 The ExApp and PKA passwords are stored in *.env.secret*.  For security reasons, credentials cannot be entered via the command line hence them not being available as command line options.  
@@ -220,6 +246,34 @@ Update EXAPP_PASSWORD in *.env.secret* with the new key.
 
 Run `.\pka_marker.py` and ensure it authenticates using the updated key.  You should see the marking output shown earlier.  
 
+## Output, results and logging.
+Running pka_marker with no command line options and with `USE_DEFAULT_RESULTS_FILE = True` and `USE_GUEST_FILE = True` in *.env.shared* generates a CSV file called &lt;value of PKA_BASE_DIR&gt;.csv 
+containing the lab score details and guest.txt containing the names of any files that contained only Guest PKA attempts (effectively non attempts).  Both files are in the directory specified by PKA_BASE_DIR.
+Splitting the results allows the scores to be uploaded to the VLE without having to remove the Guest 0 scores.  
+Placing the filenames of Guest submissions into *guest.txt* allows the marker to follow this up as needed.  
+
+Having the CSV file named using the PKA directory name allows quicker marking by not having to update *.env.shared* each time e.g.
+<pre>
+pka_marker --pka-dir c:\marking\lab1
+pka_marker --pka-dir c:\marking\lab2
+pka_marker --pka-dir c:\marking\lab3
+</pre>
+results in  
+c:\marking\lab1 containing lab1.csv and guest.txt  
+c:\marking\lab2 containing lab2.csv and guest.txt  
+c:\marking\lab3 containing lab3.csv and guest.txt  
+
+The defaults are completely configurable using *.env.shared*.
+
+If `USE_GUEST_FILE` is set to False or `--no-guest-file` is used then the guest file is not used and Guest scores (0) are placed in the results CSV file.
+
+A value of False for `USE_DEFAULT_RESULTS_FILE` in `.env.shared` can be overridden by using `--use-defaults-results-file`.
+
+If `USE_DEFAULT_RESULTS_FILE` is set to False then the lab scores are saved to the results CSV file specified in RESULTS_CSV_FILE which is in the PKA_BASE_DIR directory.
+
+Console only output is provided by using `--no-csv` and `--no-guest-file`.
+
+Debug logging is provided by using `--verbose` and detailed output is shown on the console and saved in the file specified by `LOG_FILE` in *.env.shared*.
 
 # Checking Packet Tracer settings.
 
