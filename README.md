@@ -110,7 +110,7 @@ options:
   --version, -V                          Show program version.
 </pre>
 
-- `--data-store-id` overrides `DATA_STORE_OBJECT_LAB_ID` in `.env.shared`. Retrieving the Lab ID can be disabled completely by using `DATA_STORE_OBJECT_LAB_ID = ''` in *.env.shared*  
+- `--data-store-id` overrides `DATA_STORE_OBJECT_LAB_ID` in *.env.shared*. Retrieving the Lab ID can be disabled completely by using `DATA_STORE_OBJECT_LAB_ID = ''` in *.env.shared*  
     In the output above, `DATA_STORE_OBJECT_LAB_ID` was set to an empty string to simplify the output. In later examples it is set to the ID used in the example PKA files which is *LabID*.
     See [data store ID](#the-data-store-id) section for details on how to modify or create data store ID's.
 
@@ -118,7 +118,7 @@ options:
 
 - `--log-file` allows `LOG_FILE` specified in *.env.shared* to be overridden. Using `--log-file` enables verbose logging without requiring `--verbose` to be used.
 
-- `--no-console` disables console output. Output will still be sent to the CSV results file `RESULTS_CSV_FILE` specified in `.env.shared` or to the file specified in `--output-file`. `--no-console` cannot be used with `--no-csv` as this would disable all output.
+- `--no-console` disables console output. Output will still be sent to the CSV results file `RESULTS_CSV_FILE` specified in *.env.shared* or to the file specified in `--output-file`. `--no-console` cannot be used with `--no-csv` as this would disable all output.
 
 - `--no-csv` overrides the default value of saving the results to a CSV file, which by default is `RESULTS_CSV_FILE` in *.env.shared*
 
@@ -127,19 +127,19 @@ options:
 - `--no-lab-id` disables retrieving a value from the object store in the PKA if `DATA_STORE_OBJECT_LAB_ID` is set in *.env.shared*   
 See the section below which covers the use of a Lab ID.
 
-- `--pka-dir` allows `PKA_BASE_DIR` specified in `.env.shared` to be overridden.
+- `--pka-dir` allows `PKA_BASE_DIR` specified in *.env.shared* to be overridden.
 
 - `--pka-file` allows PKA Marker to mark a single PKA file rather than a directory containing multiple PKAs.
 
-- `--results-file` allows `RESULTS_CSV_FILE` specified in `.env.shared` to be overridden.
+- `--results-file` allows `RESULTS_CSV_FILE` specified in *.env.shared* to be overridden.
 
 - `--score-rounding-dp` allows `SCORE_ROUNDING_DP` in *.env.shared* to be overridden. In the PT Activity window in Packet Tracer, the lab score is displayed as an integer percentage (where Show Score Percentage is selected in Activity Wizard/Answer Network Setting section).
 
 - `--test-connection` tests the connection to the port that Packet Tracer is expected to be listening on.  No PKA's are marked.
 
-- `--use-default-results-file` uses the name of the PKA directory as the name of the CSV results file in that directory.  This allows a False value of `USE_DEFAULT_RESULTS_FILE` in `.env.shared` to be overridden. 
+- `--use-default-results-file` uses the name of the PKA directory as the name of the CSV results file in that directory.  This allows a False value of `USE_DEFAULT_RESULTS_FILE` in *.env.shared* to be overridden. 
 
-- `--verbose`, `-v` enables debug logging both to the console and `LOG_FILE` specified in `.env.shared` or to `--log-file` if specified.  
+- `--verbose`, `-v` enables debug logging both to the console and `LOG_FILE` specified in *.env.shared* or to `--log-file` if specified.  
 Debug logging shows the API level interaction between PKA Marker and Packet Tracer.
 
 - `--version` shows the current version of PKA Marker.  
@@ -267,7 +267,7 @@ The defaults are completely configurable using *.env.shared*.
 
 If `USE_GUEST_FILE` is set to False or `--no-guest-file` is used then the guest file is not used and Guest scores (0) are placed in the results CSV file.
 
-A value of False for `USE_DEFAULT_RESULTS_FILE` in `.env.shared` can be overridden by using `--use-defaults-results-file`.
+A value of False for `USE_DEFAULT_RESULTS_FILE` in *.env.shared* can be overridden by using `--use-defaults-results-file`.
 
 If `USE_DEFAULT_RESULTS_FILE` is set to False then the lab scores are saved to the results CSV file specified in RESULTS_CSV_FILE which is in the PKA_BASE_DIR directory.
 
