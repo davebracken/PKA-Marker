@@ -144,7 +144,11 @@ Debug logging shows the API level interaction between PKA Marker and Packet Trac
 
 - `--version` shows the current version of PKA Marker.  
 
-The command line options `--no-console` and `--no-csv`, `--data-store-id` and `--no-lab-id`, `--pka-dir` and `--pka-file` and `--guest-file` and `--no-guest-file` are mutually exclusive and cannot be used.
+The following command line options are mutually exclusive and cannot be used together:  
+- `--no-console` and `--no-csv`  
+-  `--data-store-id` and `--no-lab-id`  
+-  `--pka-dir` and `--pka-file`  
+-  `--guest-file` and `--no-guest-file`  
 
 ## Configuration file options.
 The *.env.shared* configuration file allow for longer term options to be set but most of these can be overridden using the command line.
