@@ -87,7 +87,7 @@ def test_pt_connection():
 
     test_sender.connect()
     if test_sender.is_connected():
-        logger.debug(f'Sucessfully connected to Packet Tracer on {PT_HOST}:{PT_PORT}')
+        logger.debug(f'Successfully connected to Packet Tracer on {PT_HOST}:{PT_PORT}')
         is_pt_connection_successful = True
     else:   
         logger.debug(f'Error connecting to Packet Tracer on {PT_HOST}:{PT_PORT}')
@@ -98,7 +98,7 @@ def test_pt_connection():
         test_sender.disconnect()
         if not test_sender.is_connected():
             # This should be the case at this point
-            logger.debug(f'Sucessfully disconnected from Packet Tracer.')
+            logger.debug(f'Successfully disconnected from Packet Tracer.')
             pt_disconnection_successful = True
         else:
             logger.debug(f'Error disconnecting from Packet Tracer.')
@@ -853,7 +853,7 @@ def main():
         else: 
             logger.error(f'No PKA files found: {pka_files if hasattr(args,'pka_file') else pka_files_dir}')
     else:
-        logger.error(f'Test connection could not sucessfully connect and disconnect from Packet Tracer.')
+        logger.error(f'Test connection could not successfully connect and disconnect from Packet Tracer.')
 
     return None
 
