@@ -482,47 +482,52 @@ def process_pka_file(pka_filename, data_store_id):
                     # PKA file has been opened
                     af = py_ptmp.ActiveFile()
                     
-                    # Just for testing.  Is the lab password confirmed?  It shouldn't be at this point.
-                    password_confirmed_status = get_authentication_status(af)
-                    logger.debug(f'{password_confirmed_status=}')
+                    if af.is_activity_file():
 
-                    # Authenticate using the PKA password
-                    pka_authentication_status = authenticate_to_pka(af)
-                    logger.debug(f'{pka_authentication_status=}')
-                    logger.debug(LOGGING_SEPARATOR)
 
-                    if pka_authentication_status:
-                        # PKA lab password is confirmed
+                        # Just for testing.  Is the lab password confirmed?  It shouldn't be at this point.
+                        password_confirmed_status = get_authentication_status(af)
+                        logger.debug(f'{password_confirmed_status=}')
 
-                        if data_store_id:
-                            # Get LabID from Datastore to ensure we are marking the correct PKA
-                            lab_id = af.get_script_data_store(data_store_id)
-                            logger.debug(f'{lab_id=}')
-                            logger.debug(LOGGING_SEPARATOR)
+                        # Authenticate using the PKA password
+                        pka_authentication_status = authenticate_to_pka(af)
+                        logger.debug(f'{pka_authentication_status=}')
+                        logger.debug(LOGGING_SEPARATOR)
+
+                        if pka_authentication_status:
+                            # PKA lab password is confirmed
+
+                            if data_store_id:
+                                # Get LabID from Datastore to ensure we are marking the correct PKA
+                                lab_id = af.get_script_data_store(data_store_id)
+                                logger.debug(f'{lab_id=}')
+                                logger.debug(LOGGING_SEPARATOR)
+                            else:
+                                logger.debug('Lab ID not required.')
+
+                            lab_score = get_lab_activity(af)
+
+                            # Work in progress.  Not currently used.
+                            # get_activity_feedback()
+
+                            full_name, email_addr = get_personal_details()
+
+                            # ToDo status is not used.
+                            status = close_pka_file(app_window)
+
+                            if data_store_id:
+                                logger.info(f'Result: {full_name}, {email_addr}, {lab_score}, {round(float(lab_score),SCORE_ROUNDING_DP)}, {lab_id}')
+                            else:   
+                                logger.info(f'Result: {full_name}, {email_addr}, {lab_score}, {round(float(lab_score),SCORE_ROUNDING_DP)}')
+
+                            pka_processed_status = True
+
                         else:
-                            logger.debug('Lab ID not required.')
-
-                        lab_score = get_lab_activity(af)
-
-                        # Work in progress.  Not currently used.
-                        # get_activity_feedback()
-
-                        full_name, email_addr = get_personal_details()
-
-                        # ToDo status is not used.
-                        status = close_pka_file(app_window)
-
-                        if data_store_id:
-                            logger.info(f'Result: {full_name}, {email_addr}, {lab_score}, {round(float(lab_score),SCORE_ROUNDING_DP)}, {lab_id}')
-                        else:   
-                            logger.info(f'Result: {full_name}, {email_addr}, {lab_score}, {round(float(lab_score),SCORE_ROUNDING_DP)}')
-
-                        pka_processed_status = True
-
+                            # PKA lab password was not confirmed
+                            error_msg = 'Error authenticating with PKA lab password.'
                     else:
-                        # PKA lab password was not confirmed
-                        error_msg = 'Error authenticating with PKA lab password.'
-
+                        # Not a PKA activity file
+                        error_msg = f'{pka_filename} is not a PKA activity file.'
                 else:
                     # Can't open PKA file.                    
                     error_msg = f'Error opening {pka_filename}. Received file_open_status={file_open_status}, expected=0 (FILE_OPEN_OK)'
@@ -777,7 +782,12 @@ def main():
 
     # Set the PKA files directory.
     if hasattr(args, 'pka_file'):
-        pka_files_dir = args.pka_file
+        logger.debug(f'Processing single PKA file: {args.pka_file} {Path(args.pka_file).suffix.lower()}')
+        if Path(args.pka_file).suffix.lower().lstrip('.') == pt_constants.PKA_FILETYPE:
+            pka_files_dir = args.pka_file
+        else:
+            logger.error(f'The specified file does not have a .{pt_constants.PKA_FILETYPE} extension.')
+            sys.exit(1)
     elif hasattr(args, 'pka_dir'):
         pka_files_dir = args.pka_dir
     else:

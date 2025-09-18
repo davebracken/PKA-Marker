@@ -364,6 +364,14 @@ class ActiveFile(AppWindow):
         return self.reply_value
 
 
+    def is_activity_file(self):
+        """ isActivityFile in Cisco API. """
+
+        self.set_method_name('isActivityFile')
+        self.send_message()
+        return self.reply_value
+    
+
     # The following are not currently used.
     # def get_completed_feedback(self):
     #     """getCompletedFeedback in Cisco API."""
